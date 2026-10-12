@@ -1,0 +1,26 @@
+{
+  "name": "sachin-qa-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Portfolio website for Sachin Sahoo, QA Engineer",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-server && node scripts/prerender.mjs",
+    "preview": "vite preview",
+    "validate": "node scripts/validate.mjs",
+    "test": "node scripts/test-game.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "lucide-react": "^1.55.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "vite": "^8.3.4"
+  }
+}

@@ -1,0 +1,47 @@
+# Optional: deploys to GitHub Pages on every push to main.
+# In the repo: Settings > Pages > Source = "GitHub Actions".
+# Add your values under Settings > Secrets and variables > Actions > Variables (these are public site details, not secrets).
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+      VITE_BASE_PATH: ${{ vars.VITE_BASE_PATH }}
+      VITE_CONTACT_EMAIL: ${{ vars.VITE_CONTACT_EMAIL }}
+      VITE_CONTACT_PHONE: ${{ vars.VITE_CONTACT_PHONE }}
+      VITE_GITHUB_URL: ${{ vars.VITE_GITHUB_URL }}
+      VITE_LINKEDIN_URL: ${{ vars.VITE_LINKEDIN_URL }}
+      VITE_RESUME_URL: ${{ vars.VITE_RESUME_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run validate
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,112 @@
+// Mode 3: Test Case Challenge. The player picks up to `pick` test cases.
+// value: 3 = essential, 2 = useful, 1 = lower priority here, 0 = not relevant.
+// Several cases are valid, so more than one combination can score well.
+
+export const caseChallenges = [
+  {
+    id: 'tc-login',
+    difficulty: 'beginner',
+    title: 'Login form',
+    spec: 'A login form accepts an email address and a password. Valid credentials open the dashboard.',
+    pick: 4,
+    candidates: [
+      { text: 'Valid credentials', value: 3, why: 'Confirms the main path works.' },
+      { text: 'Invalid password', value: 3, why: 'Confirms access is denied and the user is told clearly.' },
+      { text: 'Missing email', value: 2, why: 'A basic required-field check.' },
+      { text: 'Invalid email format', value: 2, why: 'Checks input validation before credentials are tried.' },
+      { text: 'Empty password', value: 2, why: 'Another required-field check, often handled differently from a wrong password.' },
+      {
+        text: 'Appropriate error messages',
+        value: 2,
+        why: 'Messages should help the user without revealing whether the email or the password was wrong.',
+      },
+      {
+        text: 'Repeated login attempts',
+        value: 1,
+        why: 'Worth raising, but the specification does not define lockout or limits. Ask before writing detailed cases.',
+      },
+      {
+        text: 'Unauthorized access to protected resources',
+        value: 1,
+        why: 'Important, but it belongs to access-control testing. For this form, login behaviour comes first.',
+      },
+    ],
+  },
+  {
+    id: 'tc-search',
+    difficulty: 'beginner',
+    title: 'Product search',
+    spec: 'A product search box lists products whose name contains the text typed.',
+    pick: 4,
+    candidates: [
+      { text: 'Text that exactly matches a product name', value: 3, why: 'The core behaviour of the feature.' },
+      { text: 'Part of a product name', value: 3, why: 'The specification says contains, so partial matches must work.' },
+      { text: 'Different upper and lower case letters', value: 2, why: 'Users do not type in a fixed case.' },
+      { text: 'Text that matches no product', value: 2, why: 'Checks the empty result and the message shown.' },
+      { text: 'Special characters such as % or &', value: 2, why: 'Special characters can break searches or queries.' },
+      { text: 'An empty search box', value: 2, why: 'The specification is silent, so this is a good question to raise and test.' },
+      { text: 'Very long text', value: 1, why: 'A reasonable edge case, but less important than the basics.' },
+      { text: 'Credit card payment at checkout', value: 0, why: 'Not part of this feature.' },
+    ],
+  },
+  {
+    id: 'tc-upload',
+    difficulty: 'intermediate',
+    title: 'Profile picture upload',
+    spec: 'Users can upload a profile picture. Allowed types: JPG and PNG. Maximum size: 2 MB.',
+    pick: 4,
+    candidates: [
+      { text: 'A valid JPG under the size limit', value: 3, why: 'The main success path.' },
+      { text: 'Files just under and just over 2 MB', value: 3, why: 'Boundary values around the limit are where size checks fail.' },
+      { text: 'An unsupported type such as PDF', value: 3, why: 'Confirms the type rule is enforced.' },
+      { text: 'A non-image file renamed to .jpg', value: 2, why: 'Checks that the content is verified, not just the file name.' },
+      { text: 'An empty (0 KB) file', value: 2, why: 'A common edge case that can cause errors.' },
+      { text: 'Connection lost during the upload', value: 2, why: 'Checks error handling and that no broken file is saved.' },
+      { text: 'Uploading the same picture twice', value: 1, why: 'Possible, but the specification does not say how duplicates should behave.' },
+      { text: 'Changing the colour of the Upload button', value: 0, why: 'Not related to the specified behaviour.' },
+    ],
+  },
+  {
+    id: 'tc-reset',
+    difficulty: 'intermediate',
+    title: 'Password reset',
+    spec: 'A user requests a reset link by email. The link expires after 30 minutes and works only once. The new password must meet the password policy.',
+    pick: 4,
+    candidates: [
+      { text: 'A registered email receives a working link', value: 3, why: 'The main success path.' },
+      { text: 'An expired link is rejected', value: 3, why: 'The specification defines the 30-minute expiry.' },
+      { text: 'A link that was already used cannot be used again', value: 3, why: 'The specification says the link works only once.' },
+      {
+        text: 'An unregistered email gets the same message as a registered one',
+        value: 2,
+        why: 'Avoids revealing which emails have accounts. Confirm the intended behaviour with the team.',
+      },
+      { text: 'A new password that breaks the policy is rejected', value: 2, why: 'Checks the password rules are applied here too.' },
+      { text: 'The confirm-password field does not match', value: 2, why: 'A standard form check.' },
+      { text: 'Requesting a reset many times in a row', value: 1, why: 'Useful if limits are specified. Ask first.' },
+      { text: 'The size of the logo in the email footer', value: 0, why: 'Cosmetic and unrelated to the reset rules.' },
+    ],
+  },
+  {
+    id: 'tc-export',
+    difficulty: 'advanced',
+    title: 'Role-based CSV export',
+    spec: 'Admins can export all leads to CSV. Managers can export only leads from their own team. Agents cannot export.',
+    pick: 4,
+    candidates: [
+      { text: 'An Agent calls the export API directly', value: 3, why: 'Checks that the backend enforces the rule, not just the UI.' },
+      { text: 'A Manager changes the team ID in the request to another team', value: 3, why: 'Tests whether team scoping can be bypassed.' },
+      { text: 'A Manager\u2019s export contains only their own team\u2019s leads', value: 3, why: 'Verifies the central scoping rule.' },
+      { text: 'An Admin export contains all leads', value: 2, why: 'Confirms the broadest role works, but it carries less risk than the restricted roles.' },
+      { text: 'The export button is hidden for Agents', value: 2, why: 'A useful UI check, but not a security control by itself.' },
+      {
+        text: 'Lead names that start with = or @ in the CSV',
+        value: 2,
+        why: 'Spreadsheet programs may treat such values as formulas. A realistic data-handling risk.',
+      },
+      { text: 'An export with no leads', value: 1, why: 'A valid edge case, but lower priority than permission checks.' },
+      { text: 'A very large export', value: 1, why: 'Performance matters, but the specification focuses on who can export what.' },
+      { text: 'The spelling of the button label', value: 0, why: 'Cosmetic and unrelated to the roles.' },
+    ],
+  },
+];
